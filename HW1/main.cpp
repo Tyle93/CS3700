@@ -5,7 +5,7 @@
 #include <array>
 #include <mpi.h>
 
-const unsigned int COUNT = 500000000;
+const int COUNT = 500000000;
 const int XRANGE[] = {1,-1,-1,1};
 const int YRANGE[] = {1,1,-1,-1};
 
@@ -21,30 +21,28 @@ std::array<std::pair<double,double>,COUNT>* generateCoords(int id){
 }
 
 int main(int argc,char **argv){
-    	int id;
-    	int size;
-    	MPI_Init(&argc,&argv);
-    	MPI_Comm_rank(MPI_COMM_WORLD,&id);
-    	MPI_Comm_size(MPI_COMM_WORLD,&size);
-    	std::array<std::pair<double,double>,COUNT>* coordinates = generateCoords(id);
-    	unsigned long long inside = 0;
-    	for(int i = 0; i < coordinates->size();i++){
-	        double h = sqrt(pow(coordinates->at(i).first,2) + pow(coordinates->at(i).second,2));
-	        if(h <= 1){
-	            inside++;
-	        }
-	}
-	unsigned long long totalInside;
-	MPI_Reduce(&inside,&totalInside, 1, MPI_UNSIGNED_LONG_LONG, MPI_SUM, 0,MPI_COMM_WORLD);
-	std::cout << "Rank: " << id << " " << "Inside: " << inside << std::endl;    
-    	if(id == 0){
-		std::cout << "TotalInside: " << totalInside << std::endl;
-		std::cout << "Total Points: " << COUNT * size << std::endl;
-		double ratio = (double)totalInside/(double)(COUNT*size);
-        	double pi = ratio * 4;
-        	std::cout << "COUNT PER NODE: " << COUNT << "\t" << "PI: " << pi << std::endl;
-    	}
-    	delete coordinates;
-    	MPI_Finalize(); 
-    	return 0;
+    int id;
+    int size;
+    MPI_Init(&argc,&argv);
+    MPI_Comm_rank(MPI_COMM_WORLD,&id);
+    MPI_Comm_size(MPI_COMM_WORLD,&size);
+    std::array<std::pair<double,double>,COUNT>* coordinates = generateCoords(id);
+    unsigned long long inside = 0;
+    for(int i = 0; i < coordinates->size();i++){
+        double h = sqrt(pow(coordinates->at(i).first,2) + pow(coordinates->at(i).second,2));
+        if(h <= 1){
+            inside++;
+        }
+    }
+    std::cout << "Rank: " << id << " " << "Inside: " << inside << std::endl;
+    unsigned long long totalInside = 0;
+    MPI_Reduce(&inside,&totalInside, 1, MPI_UNSIGNED_LONG_LONG, MPI_SUM, 0,MPI_COMM_WORLD);    
+    if(id == 0){
+        double ratio = (double)totalInside/(double)(COUNT*size);
+        double pi = ratio * 4;
+        std::cout << "COUNT PER NODE: " << COUNT << "\t" << "PI: " << pi << std::endl;
+        delete coordinates;
+    }
+    MPI_Finalize(); 
+    return 0;
 }
