@@ -5,7 +5,7 @@
 #include <array>
 #include <mpi.h>
 
-const int COUNT = 500000000;
+const unsigned long long COUNT = 500000000;
 const int XRANGE[] = {1,-1,-1,1};
 const int YRANGE[] = {1,1,-1,-1};
 
@@ -38,7 +38,9 @@ int main(int argc,char **argv){
     unsigned long long totalInside = 0;
     MPI_Reduce(&inside,&totalInside, 1, MPI_UNSIGNED_LONG_LONG, MPI_SUM, 0,MPI_COMM_WORLD);    
     if(id == 0){
-        double ratio = (double)totalInside/(double)(COUNT*size);
+	std::cout << "Total Inside: " << totalInside << std::endl;
+	std::cout << "Total Points: " << COUNT*(long long)size << std::endl; 
+        double ratio = (double)(totalInside/(double)(COUNT*(long long)size));
         double pi = ratio * 4;
         std::cout << "COUNT PER NODE: " << COUNT << "\t" << "PI: " << pi << std::endl;
         delete coordinates;
