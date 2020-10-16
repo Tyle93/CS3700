@@ -1,0 +1,11 @@
+Process 0 on cn05
+Process 0 - startIndex 0 endIndex 3; part_sum 2.083333
+Process 1 on cn06
+Process 1 - startIndex 4 endIndex 7; part_sum 0.634524
+Process 3 on cn08
+Process 3 - startIndex 12 endIndex 15; part_sum 0.277518
+Process 4 on cn09
+Process 4 - startIndex 16 endIndex 19; part_sum 0.217011
+Process 2 on cn07
+Process 2 - startIndex 8 endIndex 11; part_sum 0.385354
+Execution time (sec) = 0.023497 sum = 3.597740 
