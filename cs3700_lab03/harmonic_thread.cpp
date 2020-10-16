@@ -38,7 +38,7 @@ int main(){
   thread t[threads];
   long long slice = SIZE/threads;
   long long rem = SIZE % threads;
-  std::cout << slice <<  std::endl;
+  
   int startIdx=0;
   for (int i = 0; i < threads; ++i) {
     long long temp;
@@ -47,7 +47,7 @@ int main(){
     }else{
         temp = 0;
     }
-    std::cout << temp << std::endl;
+    
     cout << "Thread[" << i << "] - slice ["
          << startIdx << ":" << (startIdx+slice-1+temp) << "]" << endl;
     t[i] = thread(sumUp, ref(sum), ref(values), startIdx, startIdx+slice+temp);
