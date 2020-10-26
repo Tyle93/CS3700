@@ -109,8 +109,8 @@ int main(int argc,char** argv){
         chunkCount++; 
     }
     std::cout << "\nCHUNK SIZE: " << CHUNK_SIZE << std::endl
-            << "CHUNK COUNT: " << chunkCount 
-            << "NUMBER OF THREADS: " << threads 
+            << "CHUNK COUNT: " << chunkCount << std::endl
+            << "NUMBER OF THREADS: " << threads << std::endl
             << "NUMBER OF POINTS: " << points << std::endl << std::endl;
             
     int sum = 0;
