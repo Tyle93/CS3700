@@ -109,7 +109,10 @@ int main(int argc,char** argv){
         chunkCount++; 
     }
     std::cout << "\nCHUNK SIZE: " << CHUNK_SIZE << std::endl
-            << "CHUNK COUNT: " << chunkCount << std::endl << std::endl;
+            << "CHUNK COUNT: " << chunkCount 
+            << "NUMBER OF THREADS: " << threads 
+            << "NUMBER OF POINTS: " << points << std::endl << std::endl;
+            
     int sum = 0;
     auto start = std::chrono::system_clock::now();
 
@@ -157,7 +160,7 @@ int main(int argc,char** argv){
         delete[] pool;
         delete nums;
     }
-    
+
     std::chrono::duration<double> totalDur = (std::chrono::system_clock::now() - start);
     double ratio = (double)sum/points;
     double pi = ratio * 4;
