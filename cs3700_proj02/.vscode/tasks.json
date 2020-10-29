@@ -5,6 +5,7 @@
             "label": "C/C++: g++.exe build active file",
             "command": "C:\\cygwin64\\bin\\g++.exe",
             "args": [
+                "-std=c++11",
                 "-g",
                 "${file}",
                 "-o",

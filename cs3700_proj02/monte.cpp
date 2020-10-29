@@ -8,7 +8,7 @@
 #include <mutex>
 #include <chrono>
 
-#define MAX_THREADS 16
+#define MAX_THREADS std::thread::hardware_concurrency()
 #define MAX_POINTS 2000000000
 #define MIN_POINTS MAX_THREADS
 #define CHUNK_SIZE 100000000
@@ -18,7 +18,9 @@ std::mutex sumMutex;
 class BadArgException : std::exception{
     public:
         virtual const char* what() const noexcept{
-            return "usage: monte [1...16] [16...2,000,000,000]";
+            std::string retVal = "usage: monte [1..." + std::to_string(MAX_THREADS) + "]" + "["+ std::to_string(MIN_POINTS) + "..." +  std::to_string(MAX_POINTS)+ "]";
+            const char* c = retVal.c_str();
+            return c;
         }
 }badarg;
 
@@ -111,13 +113,13 @@ int main(int argc,char** argv){
     if(chunkRem != 0 ){
         chunkCount++; 
     }
-    unsigned int cores = std::thread::hardware_concurrency();
+    unsigned int hardwareThreads = std::thread::hardware_concurrency();
 
     std::cout << "\nCHUNK SIZE: " << CHUNK_SIZE << std::endl
             << "CHUNK COUNT: " << chunkCount << std::endl
             << "NUMBER OF THREADS: " << threads << std::endl
             << "NUMBER OF POINTS: " << points << std::endl
-            << "NUMBER OF CORES: " << cores << std::endl << std::endl;
+            << "NUMBER OF HARDWARE THREADS: " << hardwareThreads << std::endl << std::endl;
             
     int sum = 0;
     auto start = std::chrono::system_clock::now();
@@ -132,8 +134,12 @@ int main(int argc,char** argv){
             localPoints = CHUNK_SIZE;
         }
         
+        
         std::vector<std::pair<double,double>> *nums = new std::vector<std::pair<double,double>>(localPoints);
-        generateNumsP(nums, threads, localPoints);
+        //  Parallel generation of numbers slower than sequential generation when run on linux
+        //  whereas it results in a signifigant speed boost when run on windows.
+        //  generateNumsP(nums, threads, localPoints);
+        generateNums(nums,localPoints);
         int rem = localPoints%threads;
         int slice = localPoints/threads;
 
