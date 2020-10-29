@@ -24,14 +24,12 @@ class BadArgException : std::exception{
 
 void monte(std::vector<std::pair<double,double>> *nums, int startIndex, int endIndex, int &sum, int threadNum){
     int localSum = 0;
-
     for(int i = startIndex; i < endIndex; i++){
         double result = sqrt(pow(nums->at(i).first,2) + pow(nums->at(i).second,2));
         if(result <= 1){
             localSum++;
         }
     }
-
     std::lock_guard<std::mutex> lock(sumMutex);
     sum += localSum;
 }
@@ -53,6 +51,7 @@ void generateNums(std::vector<std::pair<double,double>> *nums, int startIndex, i
         nums->at(i) = std::make_pair(x,y);
     }
 }
+
 void generateNumsP(std::vector<std::pair<double,double>> *nums, int threads, int points){
    
     int slice = points/threads;
@@ -86,14 +85,18 @@ void generateNumsP(std::vector<std::pair<double,double>> *nums, int threads, int
 }
 
 int main(int argc,char** argv){
+
     unsigned short threads;
     unsigned long points;
+
     try{
         if(argc != 3){
             throw badarg;
         }
+
         threads = std::stoi(argv[1]);
         points = std::stoi(argv[2]);
+
         if(threads > MAX_THREADS || points > MAX_POINTS || points < MIN_POINTS ){
             throw badarg;
         }
@@ -108,6 +111,7 @@ int main(int argc,char** argv){
     if(chunkRem != 0 ){
         chunkCount++; 
     }
+
     std::cout << "\nCHUNK SIZE: " << CHUNK_SIZE << std::endl
             << "CHUNK COUNT: " << chunkCount << std::endl
             << "NUMBER OF THREADS: " << threads << std::endl
@@ -165,11 +169,11 @@ int main(int argc,char** argv){
     double ratio = (double)sum/points;
     double pi = ratio * 4;
 
-    std::cout << "TOTAL INSIDE: " << sum << std::endl;
-    std::cout << "TOTAL POINTS: " << points << std::endl;
-    std::cout << "RATIO: " << ratio << std::endl;
-    std::cout << "PI APPROXIMATION: " << pi << std::endl;
-    std::cout << "TOTAL COMPLETION TIME: " << totalDur.count() << std::endl;
+    std::cout << "TOTAL INSIDE: " << sum << std::endl
+     << "TOTAL POINTS: " << points << std::endl
+     << "RATIO: " << ratio << std::endl
+     << "PI APPROXIMATION: " << pi << std::endl
+     << "TOTAL COMPLETION TIME: " << totalDur.count() << std::endl;
 
     return 0;
 }   
