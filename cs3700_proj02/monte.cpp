@@ -111,11 +111,13 @@ int main(int argc,char** argv){
     if(chunkRem != 0 ){
         chunkCount++; 
     }
+    unsigned int cores = std::thread::hardware_concurrency();
 
     std::cout << "\nCHUNK SIZE: " << CHUNK_SIZE << std::endl
             << "CHUNK COUNT: " << chunkCount << std::endl
             << "NUMBER OF THREADS: " << threads << std::endl
-            << "NUMBER OF POINTS: " << points << std::endl << std::endl;
+            << "NUMBER OF POINTS: " << points << std::endl
+            << "NUMBER OF CORES: " << cores << std::endl << std::endl;
             
     int sum = 0;
     auto start = std::chrono::system_clock::now();
