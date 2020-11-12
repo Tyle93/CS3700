@@ -85,5 +85,5 @@ print("A X B (GPU):")
 print(device_c.get())
 
 print("-" * 60)
-print("A X B (GPU):")
+print("A + B (GPU):")
 print(device_d.get())
