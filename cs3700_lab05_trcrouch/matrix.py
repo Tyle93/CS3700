@@ -20,7 +20,20 @@ __global__ void product(float *d_a, float *d_b, float *d_c) {
 
     d_c[row * %(MATRIX_SIZE)s + col] = sum;
 }
+
+__global__ void sum(float *d_a, float *d_b, float *d_d){
+   int col = blockIdx.x * blockDim.x + threadIdx.x ;
+   int row = blockIdx.y * blockDim.y + threadIdx.y ;
+
+   if (row < %(MATRIX_SIZE)s && col < %(MATRIX_SIZE)s) {
+      for (int i = 0 ; i < %(MATRIX_SIZE)s; ++i) {
+         d_d[row * %(MATRIX_SIZE)s + i] += d_a[row * %(MATRIX_SIZE)s + i ] + d_b[row * %(MATRIX_SIZE)s + i] ;
+      }
+   }
+}
 """
+
+
 
 WIDTH = 6
 
@@ -34,6 +47,7 @@ device_b = gpuarray.to_gpu(host_b)
 
 # create empty gpu array for the result (C = A * B)
 device_c = gpuarray.empty((WIDTH, WIDTH), np.float32)
+device_d = gpuarray.empty((WIDTH,WIDTH), np.float32)
 
 # get the kernel code from the template 
 # by specifying the constant MATRIX_SIZE
@@ -46,9 +60,14 @@ mod = compiler.SourceModule(kernel_code)
 
 # get the kernel function from the compiled module
 product = mod.get_function("product")
+sum = mod.get_function("sum")
 
 # call the kernel on the card
 product(device_a, device_b, device_c, 
+    block = (WIDTH, WIDTH, 1),
+    grid = (WIDTH//2, WIDTH//2))
+
+sum(device_a,device_b,device_d,
     block = (WIDTH, WIDTH, 1),
     grid = (WIDTH//2, WIDTH//2))
 
@@ -64,3 +83,7 @@ print(device_b.get())
 print("-" * 60)
 print("A X B (GPU):")
 print(device_c.get())
+
+print("-" * 60)
+print("A X B (GPU):")
+print(device_d.get())
